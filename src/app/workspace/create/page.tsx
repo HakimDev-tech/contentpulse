@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
 
 import { loadAnalysis } from "@/lib/data/analysis-storage";
 import { demoSignals } from "@/lib/data/demo-signals";
 
 import type { ContentOpportunity } from "@/lib/types";
 
-type Platform = "linkedin" | "twitter" | "reddit" | "newsletter";
+type Platform =
+  | "linkedin"
+  | "twitter"
+  | "reddit"
+  | "newsletter";
 
 type GeneratedContent = {
   platform: Platform;
@@ -64,7 +68,7 @@ function getStoredOpportunity(
   );
 }
 
-export default function CreateContentPage() {
+function CreateContentPageContent() {
   const searchParams = useSearchParams();
 
   const opportunityId =
@@ -191,6 +195,7 @@ export default function CreateContentPage() {
                 className="mt-6 inline-flex rounded-xl bg-zinc-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
               >
                 Review opportunities
+
                 <span
                   className="ml-2"
                   aria-hidden="true"
@@ -229,8 +234,8 @@ export default function CreateContentPage() {
             <p className="max-w-2xl text-zinc-600">
               ContentPulse uses the selected
               audience problem, insight, and
-              evidence to generate platform-specific
-              content.
+              evidence to generate
+              platform-specific content.
             </p>
           </div>
         </header>
@@ -244,7 +249,8 @@ export default function CreateContentPage() {
                 </span>
 
                 <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
-                  Score {opportunity.opportunityScore}
+                  Score{" "}
+                  {opportunity.opportunityScore}
                   /100
                 </span>
               </div>
@@ -306,7 +312,8 @@ export default function CreateContentPage() {
 
                 {evidence.length === 0 && (
                   <p className="text-sm text-zinc-500">
-                    No supporting signals available.
+                    No supporting signals
+                    available.
                   </p>
                 )}
               </div>
@@ -325,7 +332,8 @@ export default function CreateContentPage() {
 
               <p className="mt-2 text-sm leading-6 text-zinc-500">
                 The same audience insight can be
-                adapted to different content formats.
+                adapted to different content
+                formats.
               </p>
             </div>
 
@@ -449,5 +457,33 @@ export default function CreateContentPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+function CreateContentFallback() {
+  return (
+    <main className="min-h-screen bg-zinc-50">
+      <div className="mx-auto max-w-6xl px-6 py-10 lg:px-8 lg:py-14">
+        <div className="h-4 w-40 animate-pulse rounded bg-zinc-200" />
+
+        <div className="mt-6 h-10 w-2/3 animate-pulse rounded bg-zinc-200" />
+
+        <div className="mt-3 h-5 w-1/2 animate-pulse rounded bg-zinc-200" />
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
+          <div className="h-96 animate-pulse rounded-2xl bg-zinc-200" />
+
+          <div className="h-96 animate-pulse rounded-2xl bg-zinc-200" />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function CreateContentPage() {
+  return (
+    <Suspense fallback={<CreateContentFallback />}>
+      <CreateContentPageContent />
+    </Suspense>
   );
 }
